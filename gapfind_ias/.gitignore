@@ -8,6 +8,8 @@ node_modules
 cdk.out
 cdk.context.json
 
+.aws-sam
+
 # mine
 .vscode
 *.env
