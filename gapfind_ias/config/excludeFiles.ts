@@ -4,4 +4,7 @@ export const PYTHON_EXCLUDES = [
   ".vscode",
   "*.env",
   ".pytest_cache",
+  "tests",
+  "test-requirements.txt",
+  "__pycache__",
 ];

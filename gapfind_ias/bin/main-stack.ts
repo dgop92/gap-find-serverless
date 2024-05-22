@@ -1,17 +1,11 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as python from "@aws-cdk/aws-lambda-python-alpha";
 import { AwsEnvStackProps } from "../config/custom-types";
-import {
-  getCloudFormationID,
-  getResourceName,
-  getRootOfExternalProject,
-} from "../config/utils";
+import { getCloudFormationID, getResourceName } from "../config/utils";
 import { CorsHttpMethod, HttpApi } from "aws-cdk-lib/aws-apigatewayv2";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { HttpMethod } from "aws-cdk-lib/aws-events";
-import { PYTHON_EXCLUDES } from "../config/excludeFiles";
+import { LambdaMicroservice } from "./lambda-microservice";
 
 export class MainStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: AwsEnvStackProps) {
@@ -19,21 +13,10 @@ export class MainStack extends cdk.Stack {
 
     // Lambda functions
 
-    const codePath = getRootOfExternalProject("gapfind_core");
-    const manualRegisterLambda = new python.PythonFunction(
-      this,
-      getCloudFormationID(id, "manual-register-lambda"),
-      {
-        entry: codePath,
-        runtime: lambda.Runtime.PYTHON_3_10,
-        index: "manual_register.py",
-        handler: "handler",
-        functionName: getResourceName(id, "manual-register-lambda"),
-        bundling: {
-          assetExcludes: PYTHON_EXCLUDES,
-        },
-      }
-    );
+    const manualRegisterLambda = new LambdaMicroservice(this, id, {
+      projectName: "manual_register",
+      functionName: "manual-register-lambda",
+    });
 
     // Create an API Gateway
 
@@ -52,7 +35,7 @@ export class MainStack extends cdk.Stack {
 
     const manualRegisterLambdaIntegration = new HttpLambdaIntegration(
       "manual-register-lambda-integration",
-      manualRegisterLambda
+      manualRegisterLambda.lambdaFunc
     );
 
     // Create a resource and method for the API
