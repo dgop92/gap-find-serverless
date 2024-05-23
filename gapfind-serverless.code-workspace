@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "manual_register"
+		},
+		{
+			"path": "results"
 		}
 	]
 }

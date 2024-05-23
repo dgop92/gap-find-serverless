@@ -13,10 +13,22 @@ export class MainStack extends cdk.Stack {
 
     // Lambda functions
 
-    const manualRegisterLambda = new LambdaMicroservice(this, id, {
-      projectName: "manual_register",
-      functionName: "manual-register-lambda",
-    });
+    const manualRegisterLambda = new LambdaMicroservice(
+      this,
+      getCloudFormationID(id, "manual-service"),
+      {
+        projectName: "manual_register",
+        functionName: "manual-register-lambda",
+      }
+    );
+    const resultsLambda = new LambdaMicroservice(
+      this,
+      getCloudFormationID(id, "results-service"),
+      {
+        projectName: "results",
+        functionName: "results-lambda",
+      }
+    );
 
     // Create an API Gateway
 
@@ -33,16 +45,28 @@ export class MainStack extends cdk.Stack {
       },
     });
 
+    // Create integrations
+
     const manualRegisterLambdaIntegration = new HttpLambdaIntegration(
       "manual-register-lambda-integration",
       manualRegisterLambda.lambdaFunc
     );
+    const resultsLambdaIntegration = new HttpLambdaIntegration(
+      "results-lambda-integration",
+      resultsLambda.lambdaFunc
+    );
 
-    // Create a resource and method for the API
+    // Add routes
+
     httpApi.addRoutes({
       path: "/manual",
       methods: [HttpMethod.POST],
       integration: manualRegisterLambdaIntegration,
+    });
+    httpApi.addRoutes({
+      path: "/results",
+      methods: [HttpMethod.POST],
+      integration: resultsLambdaIntegration,
     });
   }
 }
