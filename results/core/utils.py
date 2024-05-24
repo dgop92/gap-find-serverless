@@ -10,6 +10,8 @@ class BasicResponse:
     def to_dict(self):
         return {
             "statusCode": self.status,
-            "headers": {},
+            "headers": {
+                "Content-Type": "application/json",
+            },
             "body": json.dumps(self.body, ensure_ascii=False),
         }
