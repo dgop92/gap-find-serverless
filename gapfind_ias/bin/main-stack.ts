@@ -6,6 +6,7 @@ import { HttpApi } from "aws-cdk-lib/aws-apigatewayv2";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { HttpMethod } from "aws-cdk-lib/aws-events";
 import { LambdaMicroservice } from "./lambda-microservice";
+import { getEnvironmentVariablesFromEnv } from "./lambda-env-vars";
 
 export class MainStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: AwsEnvStackProps) {
@@ -13,12 +14,21 @@ export class MainStack extends cdk.Stack {
 
     // Lambda functions
 
+    const envVars = getEnvironmentVariablesFromEnv(props.config.env);
+
     const manualRegisterLambda = new LambdaMicroservice(
       this,
       getCloudFormationID(id, "manual-service"),
       {
         projectName: "manual_register",
         functionName: "manual-register-lambda",
+        secrets: [
+          {
+            id: "manual-register-redis-url-param",
+            paramName: `/${props.config.appName}/${props.config.env}/redis_url`,
+          },
+        ],
+        envVars,
       }
     );
     const resultsLambda = new LambdaMicroservice(
@@ -27,6 +37,13 @@ export class MainStack extends cdk.Stack {
       {
         projectName: "results",
         functionName: "results-lambda",
+        secrets: [
+          {
+            id: "results-register-redis-url-param",
+            paramName: `/${props.config.appName}/${props.config.env}/redis_url`,
+          },
+        ],
+        envVars,
       }
     );
 

@@ -1,5 +1,6 @@
 import pydantic
 
+from core.db import UsernameRedisDB
 from core.entities import ManualRegisterInput
 from core.responses import get_body_response_from_pydantic_val_error
 from core.utils import BasicResponse
@@ -7,8 +8,9 @@ from core.utils import BasicResponse
 
 def handler(event, context):
 
-    print("Hello world")
-    print(event)
+    from core.config import APP_CONFIG
+
+    redis_db = UsernameRedisDB(APP_CONFIG.redis_url)
 
     raw_body = event.get("body", None)
 
@@ -22,6 +24,9 @@ def handler(event, context):
             "username": "pepito",
             "schedule": "10001111",
         }
+        redis_db.save_user(
+            username=response_data["username"], schedule=response_data["schedule"]
+        )
         return BasicResponse(status=201, body=response_data).to_dict()
     except pydantic.ValidationError as e:
         error_body = get_body_response_from_pydantic_val_error(e)

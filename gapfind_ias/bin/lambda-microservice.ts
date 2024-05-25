@@ -7,10 +7,19 @@ import {
   getRootOfExternalProject,
 } from "../config/utils";
 import { PYTHON_EXCLUDES } from "../config/excludeFiles";
+import { StringParameter } from "aws-cdk-lib/aws-ssm";
+import { Duration } from "aws-cdk-lib";
+
+export interface LambdaSecret {
+  id: string;
+  paramName: string;
+}
 
 export interface LambdaMicroserviceProps {
   functionName: string;
   projectName: string;
+  envVars?: { [key: string]: string };
+  secrets?: LambdaSecret[];
 }
 
 export class LambdaMicroservice extends Construct {
@@ -18,7 +27,7 @@ export class LambdaMicroservice extends Construct {
 
   constructor(scope: Construct, id: string, props: LambdaMicroserviceProps) {
     super(scope, id);
-    const { functionName, projectName } = props;
+    const { functionName, projectName, secrets } = props;
 
     const codePath = getRootOfExternalProject(projectName);
     const pythonFunc = new python.PythonFunction(
@@ -33,8 +42,21 @@ export class LambdaMicroservice extends Construct {
         bundling: {
           assetExcludes: PYTHON_EXCLUDES,
         },
+        environment: props.envVars,
+        timeout: Duration.seconds(20),
       }
     );
+
+    if (secrets) {
+      secrets.forEach((secret) => {
+        const param = StringParameter.fromSecureStringParameterAttributes(
+          this,
+          secret.id,
+          { parameterName: secret.paramName }
+        );
+        param.grantRead(pythonFunc);
+      });
+    }
 
     this.lambdaFunc = pythonFunc;
   }
