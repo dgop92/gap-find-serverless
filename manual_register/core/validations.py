@@ -19,7 +19,7 @@ def get_body_response_from_pydantic_val_error(val_error: ValidationError):
             if error["type"] == "too_long":
                 msg = "Es imposible tener más de 98 horas de clases a la semana"
 
-            return {"non_field_errors": msg}
+            return {"list_of_indices": [msg]}
 
         if field_name == "username":
             msg = "error desconocido"
@@ -32,11 +32,11 @@ def get_body_response_from_pydantic_val_error(val_error: ValidationError):
             if error["type"] == "string_pattern_mismatch":
                 msg = "El nombre de usuario solo puede contener letras"
 
-            return {"username": msg}
+            return {"username": [msg]}
 
-        return {"non_field_errors": "error desconocido"}
+        return {"non_field_errors": ["error desconocido"]}
     except:
-        return {"non_field_errors": f"error desconocido: {str(val_error)}"}
+        return {"non_field_errors": [f"error desconocido: {str(val_error)}"]}
 
 
 def validate_body(raw_body: Any | None) -> GenericJSONResponse | ManualRegisterInput:

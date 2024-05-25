@@ -5,9 +5,9 @@ from typing_extensions import Annotated
 
 
 class ResultsInput(BaseModel):
-    usernames: List[Annotated[str, Field(min_length=1, max_length=30)]] = Field(
-        ..., min_length=2, max_length=98
-    )
+    usernames: List[
+        Annotated[str, Field(min_length=1, max_length=30, pattern=r"^[a-zA-Z]*$")]
+    ] = Field(..., min_length=2, max_length=98)
 
     compute_sd: bool = False
     no_classes_day: bool = False

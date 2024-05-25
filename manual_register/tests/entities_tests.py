@@ -67,7 +67,7 @@ def test_raise_error_when_list_of_indices_is_empty():
 
     msg_error = get_body_response_from_pydantic_val_error(context.exception)
     assertions.assertEqual(
-        msg_error, {"non_field_errors": "El horario no puede estar vacío"}
+        msg_error, {"list_of_indices": ["El horario no puede estar vacío"]}
     )
 
 
@@ -84,7 +84,9 @@ def test_raise_error_when_list_of_indices_is_too_long():
     assertions.assertEqual(
         msg_error,
         {
-            "non_field_errors": "Es imposible tener más de 98 horas de clases a la semana"
+            "list_of_indices": [
+                "Es imposible tener más de 98 horas de clases a la semana"
+            ]
         },
     )
 
@@ -104,7 +106,7 @@ def test_raise_error_when_username_is_empty():
 
     msg_error = get_body_response_from_pydantic_val_error(context.exception)
     assertions.assertEqual(
-        msg_error, {"username": "El nombre de usuario no puede estar vacío"}
+        msg_error, {"username": ["El nombre de usuario no puede estar vacío"]}
     )
 
 
@@ -120,7 +122,7 @@ def test_raise_error_when_username_is_too_long():
     msg_error = get_body_response_from_pydantic_val_error(context.exception)
     assertions.assertEqual(
         msg_error,
-        {"username": "El nombre de usuario no puede tener más de 30 caracteres"},
+        {"username": ["El nombre de usuario no puede tener más de 30 caracteres"]},
     )
 
 
@@ -139,5 +141,5 @@ def test_raise_error_when_username_is_invalid():
 
     msg_error = get_body_response_from_pydantic_val_error(context.exception)
     assertions.assertEqual(
-        msg_error, {"username": "El nombre de usuario solo puede contener letras"}
+        msg_error, {"username": ["El nombre de usuario solo puede contener letras"]}
     )

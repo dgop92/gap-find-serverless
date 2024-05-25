@@ -3,6 +3,7 @@ import unittest
 from pydantic import ValidationError
 
 from core.entities import ResultsInput
+from core.validations import get_body_response_from_pydantic_val_error
 
 assertions = unittest.TestCase()
 
@@ -55,8 +56,24 @@ def test_raise_error_when_usernames_is_less_than_2():
         ResultsInput.model_validate_json(json_data)
 
     error = context.exception.errors()[0]
-    print(error)
     assertions.assertEqual(error["loc"][0], "usernames")
+
+
+def test_raise_error_when_username_is_invalid():
+    json_data = """
+    {
+        "usernames": ["asdasd", "pe#pito"]
+    } 
+    """
+    with assertions.assertRaises(ValidationError) as context:
+        ResultsInput.model_validate_json(json_data)
+
+    error = context.exception.errors()[0]
+    msg_error = get_body_response_from_pydantic_val_error(context.exception)
+    assertions.assertEqual(error["loc"][0], "usernames")
+    assertions.assertEqual(
+        msg_error["usernames"][0], "El usuario pe#pito solo puede contener letras"
+    )
 
 
 def test_raise_error_when_limit_is_less_than_2():
