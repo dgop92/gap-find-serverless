@@ -16,5 +16,5 @@ HourDayTuple = Annotated[Tuple[int, int], AfterValidator(validate_hour_day_tuple
 
 
 class ManualRegisterInput(BaseModel):
-    username: str = Field(..., min_length=1, max_length=30)
+    username: str = Field(..., min_length=1, max_length=30, pattern=r"^[a-zA-Z]*$")
     list_of_indices: List[HourDayTuple] = Field(..., min_length=1, max_length=98)

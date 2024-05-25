@@ -1,31 +1,22 @@
-from pydantic import ValidationError
+import json
+from typing import Any, Dict
 
 
-def get_body_response_from_pydantic_val_error(val_error: ValidationError):
-    try:
-        error = val_error.errors()[0]
-        field_name = error["loc"][0]
+class GenericJSONResponse:
+    def __init__(self, status: int, body: Dict[str, Any]):
+        self.status = status
+        self.body = body
 
-        if field_name == "list_of_indices":
-            msg = "error desconocido"
-            if error["type"] == "too_short":
-                msg = "El horario no puede estar vacío"
+    def to_dict(self):
+        return {
+            "statusCode": self.status,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps(self.body, ensure_ascii=False),
+        }
 
-            if error["type"] == "too_long":
-                msg = "Es imposible tener más de 98 horas de clases a la semana"
 
-            return {"non_field_errors": msg}
-
-        if field_name == "username":
-            msg = "error desconocido"
-            if error["type"] == "string_too_short":
-                msg = "El nombre de usuario no puede estar vacío"
-
-            if error["type"] == "string_too_long":
-                msg = "El nombre de usuario no puede tener más de 30 caracteres"
-
-            return {"username": msg}
-
-        return {"non_field_errors": "error desconocido"}
-    except:
-        return {"non_field_errors": f"error desconocido: {str(val_error)}"}
+class BadRequestResponse(GenericJSONResponse):
+    def __init__(self, body: Dict[str, Any]):
+        super().__init__(status=400, body=body)

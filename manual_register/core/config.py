@@ -26,6 +26,7 @@ class APPConfig:
             )
 
         self.aws_region = config_as_str("AWS_REGION", default="us-east-1")
+        self.mock_repository = config_as_bool("MOCK_REPOSITORY", default=True)
 
         self._load_secrets()
         self._validate_settings()

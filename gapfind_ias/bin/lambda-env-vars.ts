@@ -1,6 +1,7 @@
 export type GenericEnvvar = {
   SERVICE_ENVIRONMENT: string;
   SECRETS_FROM: string;
+  MOCK_REPOSITORY: string;
 };
 
 export function getEnvironmentVariablesFromEnv(env: string): GenericEnvvar {
@@ -8,6 +9,7 @@ export function getEnvironmentVariablesFromEnv(env: string): GenericEnvvar {
     return {
       SERVICE_ENVIRONMENT: "test",
       SECRETS_FROM: "ssm",
+      MOCK_REPOSITORY: "True",
     };
   }
 
@@ -15,6 +17,7 @@ export function getEnvironmentVariablesFromEnv(env: string): GenericEnvvar {
     return {
       SERVICE_ENVIRONMENT: "prod",
       SECRETS_FROM: "ssm",
+      MOCK_REPOSITORY: "False",
     };
   }
 
@@ -22,6 +25,7 @@ export function getEnvironmentVariablesFromEnv(env: string): GenericEnvvar {
     return {
       SERVICE_ENVIRONMENT: "dev",
       SECRETS_FROM: "ssm",
+      MOCK_REPOSITORY: "False",
     };
   }
 
