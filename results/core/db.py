@@ -1,4 +1,4 @@
-from typing import Any, Dict, Protocol
+from typing import Any, Dict, List, Protocol
 
 import redis
 
@@ -6,6 +6,8 @@ import redis
 class UsernameDB(Protocol):
 
     def get_user_schedule(self, username: str) -> str | None: ...
+
+    def get_multiple_user_schedule(self, usernames: list[str]) -> List[str | None]: ...
 
 
 class UsernameMockDB:
@@ -16,6 +18,9 @@ class UsernameMockDB:
     def get_user_schedule(self, username: str) -> str | None:
         return self.data.get(username, None)
 
+    def get_multiple_user_schedule(self, usernames: list[str]) -> List[str | None]:
+        return [self.get_user_schedule(username) for username in usernames]
+
 
 class UsernameRedisDB:
 
@@ -23,6 +28,15 @@ class UsernameRedisDB:
         self.redis = redis.Redis.from_url(url)
 
     def get_user_schedule(self, username: str) -> str | None:
-        response: Any = self.redis.get(username)
+        response: Any = self.redis.get(f"gapfind:{username}")
         schedule = response.decode("utf-8") if response else None
         return schedule
+
+    def get_multiple_user_schedule(self, usernames: list[str]) -> List[str | None]:
+        responses: Any = self.redis.mget(
+            [f"gapfind:{username}" for username in usernames]
+        )
+        schedules = [
+            response.decode("utf-8") if response else None for response in responses
+        ]
+        return schedules
