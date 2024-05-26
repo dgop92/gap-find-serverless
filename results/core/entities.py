@@ -23,6 +23,7 @@ class GapItem(BaseModel):
     day: str
     hour: str
     avg: float
+    quality: float | None
     sd: float | None
     day_index: int
     hour_index: int

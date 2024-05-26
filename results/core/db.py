@@ -7,18 +7,17 @@ class UsernameDB(Protocol):
 
     def get_user_schedule(self, username: str) -> str | None: ...
 
-    def get_multiple_user_schedule(self, usernames: list[str]) -> List[str | None]: ...
+    def get_multiple_user_schedule(self, usernames: List[str]) -> List[str | None]: ...
 
 
 class UsernameMockDB:
 
-    def __init__(self) -> None:
-        self.data: Dict[str, str] = {}
+    data: Dict[str, str] = {}
 
     def get_user_schedule(self, username: str) -> str | None:
         return self.data.get(username, None)
 
-    def get_multiple_user_schedule(self, usernames: list[str]) -> List[str | None]:
+    def get_multiple_user_schedule(self, usernames: List[str]) -> List[str | None]:
         return [self.get_user_schedule(username) for username in usernames]
 
 
@@ -32,7 +31,7 @@ class UsernameRedisDB:
         schedule = response.decode("utf-8") if response else None
         return schedule
 
-    def get_multiple_user_schedule(self, usernames: list[str]) -> List[str | None]:
+    def get_multiple_user_schedule(self, usernames: List[str]) -> List[str | None]:
         responses: Any = self.redis.mget(
             [f"gapfind:{username}" for username in usernames]
         )

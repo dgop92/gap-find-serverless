@@ -1,6 +1,6 @@
-from core.entities import GapItem
 from core.factory import core_factory
-from core.responses import GenericJSONResponse
+from core.gaps import get_gaps
+from core.responses import BadRequestResponseException, GenericJSONResponse
 from core.validations import validate_body
 
 core_components = core_factory()
@@ -16,21 +16,11 @@ def handler(event, context):
         return val_result.to_dict()
 
     try:
-        print(val_result)
-        response_data = {
-            "count": 1,
-            "gaps": [
-                GapItem(
-                    day="Lunes",
-                    hour="6:30 AM",
-                    avg=1.0,
-                    sd=0.1,
-                    day_index=0,
-                    hour_index=0,
-                ).model_dump()
-            ],
-        }
+        gaps = get_gaps(val_result, core_components.repository)
+        response_data = {"count": len(gaps), "gaps": [gap.model_dump() for gap in gaps]}
         return GenericJSONResponse(201, body=response_data).to_dict()
+    except BadRequestResponseException as e:
+        return e.bad_request_response.to_dict()
     except Exception as e:
         return GenericJSONResponse(
             500, body={"msg": f"un error ocurrió: {str(e)}"}

@@ -20,3 +20,10 @@ class GenericJSONResponse:
 class BadRequestResponse(GenericJSONResponse):
     def __init__(self, body: Dict[str, Any]):
         super().__init__(status=400, body=body)
+
+
+class BadRequestResponseException(Exception):
+
+    def __init__(self, bad_request_response: BadRequestResponse, *args: object) -> None:
+        self.bad_request_response = bad_request_response
+        super().__init__(*args)
