@@ -3,3 +3,7 @@ name = "gapfind-cf-gateway"
 main = "src/index.ts"
 compatibility_date = "2024-05-02"
 compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ALLOWED_ORIGIN = "https://gapfind.pages.dev"
+MAX_REQUESTS_PER_IP_PER_INSTANCE = 100

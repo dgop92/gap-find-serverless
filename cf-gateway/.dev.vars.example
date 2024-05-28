@@ -1,0 +1,3 @@
+TARGET_URL = "your_url"
+ALLOWED_ORIGIN = "your_allowed_origin"
+MAX_REQUESTS_PER_IP_PER_INSTANCE=5
