@@ -6,4 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ALLOWED_ORIGIN = "https://gapfind.pages.dev"
-MAX_REQUESTS_PER_IP_PER_INSTANCE = 100
+GENERIC_RPM = 20
+
+[triggers]
+crons = ["*/1 * * * *"]

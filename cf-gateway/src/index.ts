@@ -1,4 +1,5 @@
 import { handleRequest } from "./handle-request";
+import { resetLimiCount } from "./utils";
 
 const getCorsHeaders = (allowedOrigin: string) => ({
 	"Access-Control-Allow-Origin": allowedOrigin,
@@ -54,5 +55,10 @@ async function handleRequestWithCors(request: Request, env: Env): Promise<Respon
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		return handleRequestWithCors(request, env);
+	},
+
+	async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
+		console.log("resetting limit count");
+		await resetLimiCount(env.RATELIMIT_SERVER_URL, env.RATELIMIT_SERVER_KEY);
 	},
 };

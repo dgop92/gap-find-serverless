@@ -1,13 +1,17 @@
 import { RateLimitResponse, rateLimitByIp } from "./ip-ratelimit";
 
 export async function handleRequest(request: Request, env: Env): Promise<Response> {
-	const rateLimitResponse = rateLimitByIp(request, env);
+	const rateLimitResponse = await rateLimitByIp(request, env);
 
 	if (rateLimitResponse === RateLimitResponse.IP_NOT_FOUND) {
 		return Response.json(
 			{ error: "CF-Connecting-IP header is missing" },
 			{ status: 401 }
 		);
+	}
+
+	if (rateLimitResponse === RateLimitResponse.FAILED) {
+		return Response.json({ error: "Failed to check IP limit" }, { status: 500 });
 	}
 
 	if (rateLimitResponse === RateLimitResponse.TOO_MANY_REQUESTS) {
