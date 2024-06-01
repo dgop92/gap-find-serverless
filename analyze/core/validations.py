@@ -82,6 +82,8 @@ def parse_extra_usernames(body: bytes) -> List[str]:
     try:
         usernames_as_str = body.decode("utf-8")
         usernames = usernames_as_str.split(",")
+        # clean usernames
+        usernames = [username for username in usernames if username != ""]
         return usernames
     except UnicodeDecodeError:
         raise ValueError("invalid encoding for username to filter field")

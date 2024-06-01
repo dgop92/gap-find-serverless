@@ -1,4 +1,3 @@
-import json
 import unittest
 
 from core.entities import AnalyzeMeetingInput
