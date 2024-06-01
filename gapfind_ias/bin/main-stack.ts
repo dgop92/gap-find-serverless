@@ -46,6 +46,21 @@ export class MainStack extends cdk.Stack {
         envVars,
       }
     );
+    const analyzeLambda = new LambdaMicroservice(
+      this,
+      getCloudFormationID(id, "analyze-service"),
+      {
+        projectName: "analyze",
+        functionName: "analyze-lambda",
+        secrets: [
+          {
+            id: "analyze-register-redis-url-param",
+            paramName: `/${props.config.appName}/${props.config.env}/redis_url`,
+          },
+        ],
+        envVars,
+      }
+    );
 
     // Create an API Gateway
 
@@ -63,6 +78,10 @@ export class MainStack extends cdk.Stack {
       "results-lambda-integration",
       resultsLambda.lambdaFunc
     );
+    const analyzeLambdaIntegration = new HttpLambdaIntegration(
+      "analyze-lambda-integration",
+      analyzeLambda.lambdaFunc
+    );
 
     // Add routes
 
@@ -75,6 +94,11 @@ export class MainStack extends cdk.Stack {
       path: "/results",
       methods: [HttpMethod.POST],
       integration: resultsLambdaIntegration,
+    });
+    httpApi.addRoutes({
+      path: "/analyze",
+      methods: [HttpMethod.POST],
+      integration: analyzeLambdaIntegration,
     });
   }
 }
