@@ -18,7 +18,7 @@ def get_schedules(usernames: List[str], repository: UsernameDB) -> List[str]:
         response = BadRequestResponse(
             body={
                 "usernames": [
-                    f"Los siguientes usuarios no se encontraron {','.join(usernames_without_schedule)}:"
+                    f"Los siguientes usuarios no se encontraron: {','.join(usernames_without_schedule)}"
                 ]
             },
         )

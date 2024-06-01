@@ -8,7 +8,9 @@ class AnalyzeMeetingInput(BaseModel):
     usernames: List[
         Annotated[str, Field(min_length=1, max_length=30, pattern=r"^[a-zA-Z]*$")]
     ] = Field(..., min_length=2, max_length=150)
-    username_to_filter: str | None = Field(None, min_length=1, max_length=150)
+    username_to_filter: str | None = Field(
+        min_length=1, max_length=30, pattern=r"^[a-zA-Z]*$", default=None
+    )
 
 
 class AnalyzeMeetingResult(BaseModel):

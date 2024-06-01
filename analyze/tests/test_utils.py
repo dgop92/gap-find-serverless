@@ -10,7 +10,7 @@ def create_event_context_from_base_64_body(
     body: str,
     content_type: str,
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    event = {"headers": {"Content-Type": content_type}, "body": body}
+    event = {"headers": {"content-type": content_type}, "body": body}
     return event, {}
 
 
