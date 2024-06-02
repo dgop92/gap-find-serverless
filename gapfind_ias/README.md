@@ -2,7 +2,7 @@
 
 ## Useful commands
 
-Network Stack in dev environment
+Main Stack in dev environment
 
 ```bash
 cdk synth gapfind-main-dev-stack -c config=dev
