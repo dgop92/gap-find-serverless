@@ -27,14 +27,12 @@ class UsernameRedisDB:
         self.redis = redis.Redis.from_url(url)
 
     def get_user_schedule(self, username: str) -> str | None:
-        response: Any = self.redis.get(f"gapfind:{username}")
+        response: Any = self.redis.hget("gapfind:usernames", username)
         schedule = response.decode("utf-8") if response else None
         return schedule
 
     def get_multiple_user_schedule(self, usernames: List[str]) -> List[str | None]:
-        responses: Any = self.redis.mget(
-            [f"gapfind:{username}" for username in usernames]
-        )
+        responses: Any = self.redis.hmget("gapfind:usernames", usernames)
         schedules = [
             response.decode("utf-8") if response else None for response in responses
         ]

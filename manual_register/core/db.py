@@ -23,4 +23,4 @@ class UsernameRedisDB:
         self.redis = redis.Redis.from_url(url)
 
     def save_user(self, username: str, schedule: str) -> None:
-        self.redis.set(f"gapfind:{username}", schedule)
+        self.redis.hset("gapfind:usernames", username, schedule)
